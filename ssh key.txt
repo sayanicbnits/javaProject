@@ -1,0 +1,21 @@
+﻿SHA256:zXgjEPdr7AvHKijvrA16fHi9Xy0Mo1nN3pZFbG8wfX4 
+cbnits@cbnits
+
+ssh-keygen -t ed25519 -C "debojyoti.chakraborty@cbnits.com"
+SHA256:rPKN4pkzYp/HbBXFLV5VtHW2IFM+xMMkMBJXtDsdcWk debojyoti.chakraborty@cbnits.com
+
+ssh-add ~/.ssh/id_ed25519
+ey is invalid. You must supply a key in OpenSSH public key format
+
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAbORRxShbcci4BZWok8rKjkVz+ZLFvCMthYOzN/spgF
+
+git commit -m "text"
+
+git config --global user.email "debojyoti.chakraborty@cbnits.com"
+git config --global user.name "deb151292"
+
+git push origin 
+
+git remote add origin https://github.com/deb151292/test.git
+
+
