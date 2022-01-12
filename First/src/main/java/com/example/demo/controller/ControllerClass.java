@@ -37,5 +37,10 @@ public class ControllerClass {
 	{
  		return "Hathi mera sathi";
 	}
+	@GetMapping("/hey")
+	public String hey(){
+		return "Hey" ;
+	}
 }
+
 
