@@ -25,5 +25,12 @@ public class ControllerClass {
 	{
  		return "hello Everyone";
 	}
+	
 
-}
+@GetMapping("/hurrah")
+	public String llb()
+	{
+ 		return "Jolly LLb ban gya";
+	}
+	
+
