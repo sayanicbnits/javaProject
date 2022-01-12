@@ -6,11 +6,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.ServicePackage.ServiceClass;
+import com.example.demo.ServicePackage.ServiceInterface;
 
 @RestController
 public class ControllerClass {
 	@Autowired
-	ServiceClass serv;
+	ServiceInterface serv;
 	@GetMapping("/hlw")
 	public String hello()
 	{
