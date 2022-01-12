@@ -17,9 +17,13 @@ public class ControllerClass {
 	{
 		int a=10;
 		int b=6;
-		a=a+b;
-		b=a+b;
+		a=a+b;	
 		return a;
+	}
+	@GetMapping("/hi")
+	public String HI()
+	{
+ 		return "hello Everyone";
 	}
 
 }
