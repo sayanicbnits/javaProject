@@ -1,11 +1,17 @@
 package com.example.demo.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.ServicePackage.ServiceClass;
+import com.example.demo.ServicePackage.ServiceInterface;
+
 @RestController
 public class ControllerClass {
+	@Autowired
+	ServiceInterface serv;
 	@GetMapping("/hlw")
 	public String hello()
 	{
@@ -37,9 +43,16 @@ public class ControllerClass {
 	{
  		return "Hathi mera sathi";
 	}
+
 	@GetMapping("/hey")
 	public String hey(){
 		return "Hey" ;
+
+	@GetMapping("/result")
+	public int result()
+	{
+ 		return this.serv.result();
+>>>>>>> d48ed812db9b019508d1dbdcc24cf6d14b57b32
 	}
 }
 
