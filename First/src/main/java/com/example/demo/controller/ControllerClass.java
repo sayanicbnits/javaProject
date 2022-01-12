@@ -17,7 +17,8 @@ public class ControllerClass {
 	{
 		int a=10;
 		int b=6;
-		a=a+b;	
+		a=a+b;
+		b=a+b;
 		return a;
 	}
 
