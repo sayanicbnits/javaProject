@@ -28,7 +28,7 @@ public class ControllerClass {
 	
 
 @GetMapping("/hurrah")
-	public String HI()
+	public String llb()
 	{
  		return "Jolly LLb ban gya";
 	}
