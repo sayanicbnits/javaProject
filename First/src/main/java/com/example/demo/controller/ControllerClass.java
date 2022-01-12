@@ -15,7 +15,7 @@ public class ControllerClass {
 	@PostMapping("/add")
 	public int hello1()
 	{
-		int a=5;
+		int a=10;
 		int b=6;
 		a=a+b;	
 		return a;
