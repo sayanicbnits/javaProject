@@ -32,5 +32,10 @@ public class ControllerClass {
 	{
  		return "Jolly LLb ban gya";
 	}
+	@GetMapping("/haaa")
+	public String mos()
+	{
+ 		return "Hathi mera sathi";
+	}
 }
 
