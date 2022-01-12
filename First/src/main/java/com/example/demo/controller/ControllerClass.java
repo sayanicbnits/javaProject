@@ -43,22 +43,18 @@ public class ControllerClass {
 	{
  		return "Hathi mera sathi";
 	}
-<<<<<<< HEAD
+
 
 	@GetMapping("/hey")
-	public String hey(){
+	public String hey()
+	{
 		return "Hey" ;
-
-=======
->>>>>>> d48ed812db9b019508d1dbdcc24cf6d14b57b32b
+    }
 	@GetMapping("/result")
 	public int result()
 	{
  		return this.serv.result();
-<<<<<<< HEAD
->>>>>>> d48ed812db9b019508d1dbdcc24cf6d14b57b32
-=======
->>>>>>> d48ed812db9b019508d1dbdcc24cf6d14b57b32b
+
 	}
 }
 
