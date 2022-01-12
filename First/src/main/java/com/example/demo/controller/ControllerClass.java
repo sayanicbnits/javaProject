@@ -12,10 +12,13 @@ public class ControllerClass {
 		return "hello CBNITS";
 	}
 	
-	@PostMapping("/hlw")
-	public String hello1()
+	@PostMapping("/add")
+	public int hello1()
 	{
-		return "cbnits";
+		int a=5;
+		int b=6;
+		a=a+b;	
+		return a;
 	}
 
 }
