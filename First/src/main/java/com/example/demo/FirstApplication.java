@@ -18,8 +18,8 @@ public class FirstApplication {
 		SpringApplication.run(FirstApplication.class, args);
 	
 		
-		CallPass ab=new CallPass();
-		System.out.println(md5(String.valueOf(ab.call())));
+		//CallPass ab=new CallPass();
+		//System.out.println(md5(String.valueOf(ab.call())));
 	
 
 }
