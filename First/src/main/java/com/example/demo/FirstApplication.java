@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class FirstApplication {
 
+	//generating salted md5 password
 	public static void main(String[] args) {
 		SpringApplication.run(FirstApplication.class, args);
 	
@@ -20,6 +21,7 @@ public class FirstApplication {
 	
 
 }
+	//generating md5 password
 	public static String md5(String input) {
 		
 		String md5 = null;
