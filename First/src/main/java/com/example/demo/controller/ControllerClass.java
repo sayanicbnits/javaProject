@@ -29,7 +29,7 @@ public class ControllerClass {
 	@GetMapping("/hi")
 	public String HI()
 	{
- 		return "hello Everyone";
+ 		return "hello Everyone from cbnits family";
 	}
 	
 
