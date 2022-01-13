@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.CallPass;
+import com.example.demo.FirstApplication;
 import com.example.demo.ServicePackage.ServiceClass;
 import com.example.demo.ServicePackage.ServiceInterface;
 
@@ -61,6 +63,13 @@ public class ControllerClass {
 	{
  		return "Ajey Nagar is India's biggest youtuber";
 	}
+	@GetMapping("/GeneratePassword")
+	public String new1() 
+	{
+		CallPass ab=new CallPass();
+		return(FirstApplication.md5(String.valueOf(ab.call())));
+	}
+	
 }
 
 
