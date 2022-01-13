@@ -56,6 +56,11 @@ public class ControllerClass {
  		return this.serv.result();
 
 	}
+	@GetMapping("/Carry")
+	public String Minati()
+	{
+ 		return "Ajey Nagar is India's biggest youtuber";
+	}
 }
 
 
