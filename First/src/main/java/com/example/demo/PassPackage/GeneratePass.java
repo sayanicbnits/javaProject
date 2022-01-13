@@ -21,6 +21,7 @@ public class GeneratePass {
 	    RANDOM.nextBytes(salt);
 	    return salt;
 	  }
+	//generating salted password
 	  public static byte[] hash(char[] password, byte[] salt) {
 		    PBEKeySpec spec = new PBEKeySpec(password, salt, ITERATIONS, KEY_LENGTH);
 		    Arrays.fill(password, Character.MIN_VALUE);
