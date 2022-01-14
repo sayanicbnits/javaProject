@@ -9,6 +9,8 @@ import javax.persistence.Table;
 @Table(name="user_password")
 public class EntityClass {
 	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+
 	@Column(name="user_id")
 	private String user_id;
 	@Column(name="password")
