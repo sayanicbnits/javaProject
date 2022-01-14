@@ -1,13 +1,12 @@
 package com.example.demo.controller;
 
+import java.util.Scanner;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.example.demo.CallPass;
-import com.example.demo.FirstApplication;
-import com.example.demo.ServicePackage.ServiceClass;
 import com.example.demo.ServicePackage.ServiceInterface;
 
 @RestController
@@ -66,8 +65,15 @@ public class ControllerClass {
 	@GetMapping("/GeneratePassword")
 	public String new1() 
 	{
-		CallPass ab=new CallPass();
-		return(FirstApplication.md5(String.valueOf(ab.call())));
+		Scanner sc=new Scanner(System.in);
+		System.out.println("enter password");
+		char pass[]=sc.next().toCharArray();
+	//	CallingMethod ab=new CallingMethod();
+		//return(FirstApplication.md5(String.valueOf(ab.call())))
+		byte salt[]=serv.getNextSalt();
+		byte saltedPass[]=serv.hash(pass,salt);
+		return this.serv.md5(String.valueOf(saltedPass));
+
 	}
 	
 }

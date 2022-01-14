@@ -1,14 +1,15 @@
 package com.example.demo;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+//import java.math.BigInteger;
 
-import org.springframework.beans.factory.annotation.Autowired;
+//import java.security.MessageDigest;
+//import java.security.NoSuchAlgorithmException;
+
+//import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.example.demo.callpass.CallPass;
+//import com.example.demo.callpass.CallPass;
 
 @SpringBootApplication
 public class FirstApplication {
@@ -23,8 +24,9 @@ public class FirstApplication {
 	
 
 }
+}
 	//generating md5 password
-	public static String md5(String input) {
+	/*public static String md5(String input) {
 		
 		String md5 = null;
 		
@@ -47,4 +49,4 @@ public class FirstApplication {
 		}
 		return md5;
 	}
-}
+}*/
