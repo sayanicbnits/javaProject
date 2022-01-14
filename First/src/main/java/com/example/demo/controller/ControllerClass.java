@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 
@@ -31,17 +33,21 @@ public class ControllerClass {
 		return a;
 	}
 	@GetMapping("/GeneratePassword")
-	public String new1(@ModelAttribute EntityClass data) 
+	public Map<String,String> new1(@ModelAttribute EntityClass data) 
 	{
+		Map<String,String> m = new HashMap<String,String>();
 		//Scanner sc=new Scanner(System.in);
 		//System.out.println("enter password");
 		//char pass[]=sc.next().toCharArray();
 	//	CallingMethod ab=new CallingMethod();
 		//return(FirstApplication.md5(String.valueOf(ab.call())))
+		String user_id = data.getUser_id();
 		byte salt[]=serv.getNextSalt();
 		byte saltedPass[]=serv.hash(data.getPass(),salt);
-		return this.serv.md5(String.valueOf(saltedPass));
-
+		 String pass = this.serv.md5(String.valueOf(saltedPass));
+		 m.put("user_id", user_id);
+		 m.put("password", pass);
+		 return m;
 	}
 	
 }
