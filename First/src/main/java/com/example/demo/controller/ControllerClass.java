@@ -20,9 +20,8 @@ public class ControllerClass {
 	@GetMapping("/hlw")
 	public String hello()
 	{
-		return "hello CBNITS";
+		return "hello everyone from CBNITS";
 	}
-	
 	@PostMapping("/add")
 	public int hello1()
 	{
@@ -30,41 +29,6 @@ public class ControllerClass {
 		int b=6;
 		a=a+b;	
 		return a;
-	}
-	@GetMapping("/hi")
-	public String HI()
-	{
- 		return "hello Everyone from cbnits family";
-	}
-	
-
-@GetMapping("/hurrah")
-	public String llb()
-	{
- 		return "Jolly LLb ban gya";
-	}
-	@GetMapping("/haaa")
-	public String mos()
-	{
- 		return "Hathi mera sathi";
-	}
-
-
-	@GetMapping("/hey")
-	public String hey()
-	{
-		return "Hey" ;
-    }
-	@GetMapping("/result")
-	public int result()
-	{
- 		return this.serv.result();
-
-	}
-	@GetMapping("/Carry")
-	public String Minati()
-	{
- 		return "Ajey Nagar is India's biggest youtuber";
 	}
 	@GetMapping("/GeneratePassword")
 	public String new1(@ModelAttribute EntityClass data) 
