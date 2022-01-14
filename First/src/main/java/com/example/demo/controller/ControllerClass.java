@@ -4,9 +4,13 @@ import java.util.Scanner;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.EntityPackage.EntityClass;
 import com.example.demo.ServicePackage.ServiceInterface;
 
 @RestController
@@ -63,15 +67,15 @@ public class ControllerClass {
  		return "Ajey Nagar is India's biggest youtuber";
 	}
 	@GetMapping("/GeneratePassword")
-	public String new1() 
+	public String new1(@ModelAttribute EntityClass data) 
 	{
-		Scanner sc=new Scanner(System.in);
-		System.out.println("enter password");
-		char pass[]=sc.next().toCharArray();
+		//Scanner sc=new Scanner(System.in);
+		//System.out.println("enter password");
+		//char pass[]=sc.next().toCharArray();
 	//	CallingMethod ab=new CallingMethod();
 		//return(FirstApplication.md5(String.valueOf(ab.call())))
 		byte salt[]=serv.getNextSalt();
-		byte saltedPass[]=serv.hash(pass,salt);
+		byte saltedPass[]=serv.hash(data.getPass(),salt);
 		return this.serv.md5(String.valueOf(saltedPass));
 
 	}
