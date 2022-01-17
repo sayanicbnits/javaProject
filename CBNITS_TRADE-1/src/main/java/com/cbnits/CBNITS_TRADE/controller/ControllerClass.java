@@ -59,10 +59,11 @@ public class ControllerClass {
 		 return m;
 	}
 	@PostMapping("/login")
-	public void authenticate(@ModelAttribute EntityClass data)
+	public Map<String,String> authenticate(@ModelAttribute EntityClass data)
 	{
 		String user=data.getUser_id();
 		String pass=data.getPass();
-		serv.authenticate(user,pass);
+		return(serv.authenticate(user,pass));
+		
 	}
 }

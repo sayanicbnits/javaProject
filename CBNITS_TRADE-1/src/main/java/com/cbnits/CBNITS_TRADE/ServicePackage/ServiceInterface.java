@@ -1,6 +1,7 @@
 package com.cbnits.CBNITS_TRADE.ServicePackage;
 
 import java.util.List;
+import java.util.Map;
 
 import com.cbnits.CBNITS_TRADE.EntityPackage.EntityClass;
 
@@ -10,7 +11,7 @@ public interface ServiceInterface {
 	public byte[] hash(char[] password, byte[] salt);
 	public String md5(String input);
 	public void update1(String user_id, String hashedpassst, String s);
-	public void authenticate(String user, String pass);
+	public Map<String, String> authenticate(String user, String pass);
 
 
 }

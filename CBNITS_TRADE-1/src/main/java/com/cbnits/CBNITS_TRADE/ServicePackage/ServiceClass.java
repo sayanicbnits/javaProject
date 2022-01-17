@@ -9,7 +9,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import javax.crypto.SecretKeyFactory;
@@ -94,23 +96,28 @@ import com.cbnits.CBNITS_TRADE.EntityPackage.EntityClass;
 			
 			}
 			@Override
-			public void authenticate(String user, String pass) {
+			public Map<String,String> authenticate(String user, String pass) {
 				// TODO Auto-generated method stub
+				Map <String,String>m=new HashMap<>();
 				try {
+				
 				String salt=jdbcTemplate.queryForObject("select salt from user_password where user_id=?",String.class,user);
 				byte bytesalt[]=salt.getBytes();
 				byte passed []=hash(pass.toCharArray(),bytesalt);
 				String hashedp=jdbcTemplate.queryForObject("select password from user_password where user_id=?",String.class,user);
 				String s=new String (passed);
 				if(s.equals(hashedp))
-					System.out.println("ALLOWED...");
+				{
+					m.put("Status","ALLOWED");
+				}	
 				else 
-					System.out.println("NOT ALLOWED !!PLEASE ENTER CORRECT PASSWORD");
+					m.put("Status","NOT ALLOWED!!! PLEASE ENTER CORRECT PASSWORD");
 				}
 				catch(Exception e)
 				{
-					System.out.println("PLEASE ENTER REGISTERED USER_ID");
+					m.put("Status","PLEASE ENTER REGISTERED USER_ID");
 				}
+				return m;
 			}
 
 }
