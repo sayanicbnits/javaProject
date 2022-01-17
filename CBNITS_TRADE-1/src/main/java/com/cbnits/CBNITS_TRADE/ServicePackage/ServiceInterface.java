@@ -9,7 +9,8 @@ public interface ServiceInterface {
 	public byte[] getNextSalt();	
 	public byte[] hash(char[] password, byte[] salt);
 	public String md5(String input);
-	List<EntityClass> update1(String user_id, String pass);
+	public void update1(String user_id, String hashedpassst, String s);
+	public void authenticate(String user, String pass);
 
 
 }

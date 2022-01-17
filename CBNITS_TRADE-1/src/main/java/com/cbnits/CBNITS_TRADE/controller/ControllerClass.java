@@ -45,12 +45,24 @@ public class ControllerClass {
 	//	CallingMethod ab=new CallingMethod();
 		//return(FirstApplication.md5(String.valueOf(ab.call())))
 		String user_id = data.getUser_id();
+		String password=data.getPass();
+		char passwordarr[] = password.toCharArray();
 		byte salt[]=serv.getNextSalt();
-		byte saltedPass[]=serv.hash(data.getPass(),salt);
-		 String pass = this.serv.md5(String.valueOf(saltedPass));
-		 serv.update1(user_id,pass);
+		String s=new String(salt);
+	//	byte saltedPass[]=serv.hash(data.getPass(),salt);
+	//	 String pass = this.serv.md5(String.valueOf(saltedPass));
+		byte hashedpass[]=serv.hash(passwordarr, salt);
+		String hashedpassstr=new String(hashedpass);
+		 serv.update1(user_id,hashedpassstr,s);
 		 m.put("user_id", user_id);
-		 m.put("password", pass);
+		 m.put("password",hashedpassstr);
 		 return m;
+	}
+	@PostMapping("/login")
+	public void authenticate(@ModelAttribute EntityClass data)
+	{
+		String user=data.getUser_id();
+		String pass=data.getPass();
+		serv.authenticate(user,pass);
 	}
 }

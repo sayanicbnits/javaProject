@@ -1,6 +1,9 @@
 package com.cbnits.CBNITS_TRADE.ServicePackage;
 
 import java.math.BigInteger;
+
+
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -43,9 +46,13 @@ import com.cbnits.CBNITS_TRADE.EntityPackage.EntityClass;
 			    try {
 			      SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
 			      return skf.generateSecret(spec).getEncoded();
-			    } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+			    } 
+			    catch (NoSuchAlgorithmException | InvalidKeySpecException e)
+			    {
 			      throw new AssertionError("Error while hashing a password: " + e.getMessage(), e);
-			    } finally {
+			    } 
+			    finally 
+			    {
 			      spec.clearPassword();
 			    }
 			  }
@@ -79,12 +86,31 @@ import com.cbnits.CBNITS_TRADE.EntityPackage.EntityClass;
 		  @Autowired
 			JdbcTemplate jdbcTemplate;
 			@Override
-			public List<EntityClass> update1(String user_id,String pass) {
-				String sql="INSERT INTO user_password (user_id,password) VALUES(?,?)";
-				jdbcTemplate.update(sql,user_id,pass);
-				return jdbcTemplate.query("select * from user_password",new BeanPropertyRowMapper<EntityClass>(EntityClass.class));
+			public void update1(String user_id,String hashedpassstr,String s) {
+				String sql="INSERT INTO user_password (user_id,password,salt) VALUES(?,?,?)";
+				jdbcTemplate.update(sql,user_id,hashedpassstr,s);
+				//return jdbcTemplate.query("select * from user_password",new BeanPropertyRowMapper<EntityClass>(EntityClass.class));
 			//	return l;
 			
+			}
+			@Override
+			public void authenticate(String user, String pass) {
+				// TODO Auto-generated method stub
+				try {
+				String salt=jdbcTemplate.queryForObject("select salt from user_password where user_id=?",String.class,user);
+				byte bytesalt[]=salt.getBytes();
+				byte passed []=hash(pass.toCharArray(),bytesalt);
+				String hashedp=jdbcTemplate.queryForObject("select password from user_password where user_id=?",String.class,user);
+				String s=new String (passed);
+				if(s.equals(hashedp))
+					System.out.println("ALLOWED...");
+				else 
+					System.out.println("NOT ALLOWED !!PLEASE ENTER CORRECT PASSWORD");
+				}
+				catch(Exception e)
+				{
+					System.out.println("PLEASE ENTER REGISTERED USER_ID");
+				}
 			}
 
 }

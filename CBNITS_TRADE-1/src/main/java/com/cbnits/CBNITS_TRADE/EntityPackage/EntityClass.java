@@ -15,13 +15,24 @@ public class EntityClass {
 //	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private String user_id;
 	@Column(name="password")
-	private char[] pass;
+	private String pass;
+//	@Column(name="salt")
+//	private String salt;
 
-	public EntityClass(String user_id,char[] pass) {
+	public EntityClass(String user_id,String pass,String salt) {
 		super();
 		this.user_id = user_id;
 		this.pass = pass;
+	//	this.salt=salt;
 	}
+
+/*	public String getSalt() {
+		return salt;
+	}
+
+	public void setSalt(String salt) {
+		this.salt = salt;
+	}*/
 
 	public String getUser_id() {
 		return user_id;
@@ -31,11 +42,11 @@ public class EntityClass {
 		this.user_id = user_id;
 	}
 
-	public char[] getPass() {
+	public String getPass() {
 		return pass;
 	}
 
-	public void setPass(char[] pass) {
+	public void setPass(String pass) {
 		this.pass = pass;
 	}
 
