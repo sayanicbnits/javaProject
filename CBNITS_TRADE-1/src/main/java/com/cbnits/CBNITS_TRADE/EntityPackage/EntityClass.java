@@ -1,5 +1,6 @@
-package com.cbnits.CBNITS_TRADE.EntityPackage;
+/*package com.cbnits.CBNITS_TRADE.EntityPackage;
 import javax.persistence.Column;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -24,7 +25,7 @@ public class EntityClass {
 		this.user_id = user_id;
 		this.pass = pass;
 	//	this.salt=salt;
-	}
+	}*/
 
 /*	public String getSalt() {
 		return salt;
@@ -34,7 +35,7 @@ public class EntityClass {
 		this.salt = salt;
 	}*/
 
-	public String getUser_id() {
+/*	public String getUser_id() {
 		return user_id;
 	}
 
@@ -56,4 +57,4 @@ public class EntityClass {
 	}
 
 
-}
+}*/
