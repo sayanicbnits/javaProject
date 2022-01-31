@@ -18,10 +18,10 @@ public interface ServiceInterface {
 	public void update1(String user_id, String md5pass, String salt);
 //	public void update2(String pass, String hash_pass, String salt, String act_dir, int auth, String email,
 //			String fname, String lname, String region);
-	public void update2(UUID user_id, String pass, String hash_pass, String valueOf, String act_dir, int auth,
-			String email, String fname, String lname, String region);
-	public UUID update3(UUID sales,String fname, String lname, String emailid, String region, String act_dir, int authrole);
-
+//	public void update2(UUID user_id, String pass, String hash_pass, String valueOf, String act_dir, int auth,
+//			String email, String fname, String lname, String region);
+	public void insert(UUID salesorg,String fname, String lname, String email_id, String region, String active_directory, int authrole,String hash_pass ,String s);
+	public UUID insert1(String country, String currency, int plants, String bergu, String sales_organisation);
 
 
 }

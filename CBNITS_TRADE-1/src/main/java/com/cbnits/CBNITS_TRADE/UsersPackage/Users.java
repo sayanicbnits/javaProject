@@ -8,36 +8,79 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.Email;
+//import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Range;
+
+import com.sun.istack.NotNull;
 
 @Entity
-@Table(name="users")
+@Table(name="users" ,
+uniqueConstraints=
+@UniqueConstraint(columnNames={"region", "active_directory"})
+)
 public class Users {
 	@Id
 	@GeneratedValue(generator="UUID")
 	@Column(name="id")
 	private UUID id;
 	
-	@Column(name="active_directory")
-	private String activedir;
-
+	
+	@NotEmpty(message = "first name must not be empty")
+	@Size(min = 2, max = 50, message = "The length of full name must be between 2 and 50 characters.")
 	@Column(name="first_name")
 	private String first_name;
 	
+	@NotEmpty(message = "last name must not be empty")
+	@Size(min = 2, max = 50, message = "The length of last name must be between 2 and 50 characters.")
 	@Column(name="last_name")
 	private String last_name;
 	
+	@NotEmpty(message = "Region is mandatory")
 	@Column(name="region")
 	private String region;
 	
-	@Column(name="email_id")
-	private String emailid;
+	@NotEmpty(message = "Active_directory must not be empty")
+	@Column(name="active_directory")
+	private String active_directory;
+		
 	
-	@Column(name="authorisation_role")
+	@Pattern(regexp = "[a-z0-9]+@gmail.com" ,message = "email should be a valid email")
+	@NotEmpty(message = "email must not be empty")
+//    @Email(message = "email should be a valid email")
+	@Column(name="email_id")
+	private String email_id;
+	
+	
+//	@NotNull(message= "salary may not be empty") 
+	@Range(min = 1, max = 2, message= "authorisation_role must not be empty or null")
+	@Column(name="authorisation_role", nullable = false)
 	private int authorisation_role;
 	
 	@Column(name="sales_organisation")
 	private UUID sales_org;
 	
+//    @ValidPassword
+	@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$",message="Password should contain atleast 8 characters , 1 Uppercase, 1 Lowercase, 1 special character , 1 Numeric character" )
+	@NotEmpty(message = "Password must not be empty")
+//	@Range(min = 8,max = 20 )
+	@Column(name="password")
+	private String password;
+	
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 	public UUID getSales_org() {
 		return sales_org;
 	}
@@ -46,15 +89,15 @@ public class Users {
 		this.sales_org = sales_org;
 	}
 
-	public Users(UUID id, String activedir, String first_name, String last_name, String region, String emailid,
+	public Users(UUID id, String active_directory, String first_name, String last_name, String region, String email_id,
 			int authorisation_role, UUID sales_org) {
 		super();
 		this.id = id;
-		this.activedir = activedir;
+		this.active_directory = active_directory;
 		this.first_name = first_name;
 		this.last_name = last_name;
 		this.region = region;
-		this.emailid = emailid;
+		this.email_id = email_id;
 		this.authorisation_role = authorisation_role;
 		this.sales_org = sales_org;
 	}
@@ -83,12 +126,12 @@ public class Users {
 		this.region = region;
 	}
 
-	public String getEmailid() {
-		return emailid;
+	public String getEmail_id() {
+		return email_id;
 	}
 
-	public void setEmailid(String emailid) {
-		this.emailid = emailid;
+	public void setEmail_id(String email_id) {
+		this.email_id = email_id;
 	}
 
 	public int getAuthorisation_role() {
@@ -99,15 +142,15 @@ public class Users {
 		this.authorisation_role = authorisation_role;
 	}
 
-	public Users(UUID id, String activedir, String first_name, String last_name, String region, String emailid,
+	public Users(UUID id, String active_directory, String first_name, String last_name, String region, String email_id,
 			int authorisation_role) {
 		super();
 		this.id = id;
-		this.activedir = activedir;
+		this.active_directory = active_directory;
 		this.first_name = first_name;
 		this.last_name = last_name;
 		this.region = region;
-		this.emailid = emailid;
+		this.email_id = email_id;
 		this.authorisation_role = authorisation_role;
 	}
 
@@ -130,13 +173,15 @@ public class Users {
 		this.id = id;
 	}
 
-	public String getActivedir() {
-		return activedir;
+	public String getActive_directory() {
+		return active_directory;
 	}
 
-	public void setActivedir(String activedir) {
-		this.activedir = activedir;
+	public void setActive_directory(String active_directory) {
+		this.active_directory = active_directory;
 	}
+
+	
 	
 	
 }

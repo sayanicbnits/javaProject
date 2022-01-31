@@ -52,46 +52,12 @@ public class user_password {
 	@Column(name="user_id")
 	private UUID user_id;
 	
-	@Column(name="password")
-	private String password;
+	@Column(name="hash_password")
+	private String hash_password;
 	
-	@Column(name="activedirectoryname")
-	String activedirectoryname;
+	@Column(name="salt_password")
+	private String salt_password;
 	
-	@Column(name="authrole")
-	private int authrole;
-	
-	@Column(name="email")
-	private String email;
-	
-	@Column(name="firstname")
-	private String firstname;
-	
-	@Column(name="lastname")
-	private String lastname;
-	
-	@Column(name="region")
-	private String region;
-
-	public user_password() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	public user_password(UUID id, String password, String activedirectoryname, int authrole, String email,
-			String firstname, String lastname, String region) {
-		super();
-		this.id = id;
-//		this.user_id = user_id;
-		this.password = password;
-		this.activedirectoryname = activedirectoryname;
-		this.authrole = authrole;
-		this.email = email;
-		this.firstname = firstname;
-		this.lastname = lastname;
-		this.region = region;
-	}
-
 	public UUID getId() {
 		return id;
 	}
@@ -106,7 +72,23 @@ public class user_password {
 
 	public void setUser_id(UUID user_id) {
 		this.user_id = user_id;
-			}
+	}
+
+	public String getHash_password() {
+		return hash_password;
+	}
+
+	public void setHash_password(String hash_password) {
+		this.hash_password = hash_password;
+	}
+
+	public String getSalt_password() {
+		return salt_password;
+	}
+
+	public void setSalt_password(String salt_password) {
+		this.salt_password = salt_password;
+	}
 
 	public String getPassword() {
 		return password;
@@ -116,55 +98,9 @@ public class user_password {
 		this.password = password;
 	}
 
-	public String getActivedirectoryname() {
-		return activedirectoryname;
-	}
-
-	public void setActivedirectoryname(String activedirectoryname) {
-		this.activedirectoryname = activedirectoryname;
-	}
-
-	public int getAuthrole() {
-		return authrole;
-	}
-
-	public void setAuthrole(int authrole) {
-		this.authrole = authrole;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getFirstname() {
-		return firstname;
-	}
-
-	public void setFirstname(String firstname) {
-		this.firstname = firstname;
-	}
-
-	public String getLastname() {
-		return lastname;
-	}
-
-	public void setLastname(String lastname) {
-		this.lastname = lastname;
-	}
-
-	public String getRegion() {
-		return region;
-	}
-
-	public void setRegion(String region) {
-		this.region = region;
-	}
-	
-	
+	@Column(name="password")
+	private String password;
 	
 
 }
+

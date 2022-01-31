@@ -4,24 +4,36 @@ package com.cbnits.CBNITS_TRADE.controller;
 import java.util.HashMap;
 
 import java.util.Map;
-import java.util.Scanner;
+
 import java.util.UUID;
 
+import javax.validation.Valid;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cbnits.CBNITS_TRADE.*;
+import org.springframework.validation.BindException;
 //import com.cbnits.CBNITS_TRADE.EntityPackage.EntityClass;
 //import com.example.demo.ServicePackage.ServiceInterface;
 import com.cbnits.CBNITS_TRADE.ServicePackage.ServiceInterface;
+import com.cbnits.CBNITS_TRADE.UsersPackage.Salesorg;
 import com.cbnits.CBNITS_TRADE.UsersPackage.Users;
 import com.cbnits.CBNITS_TRADE.user_passwordpackage.user_password;
 
 @RestController
+@RequestMapping(value = "/users")
 
 public class ControllerClass {
 	@Autowired
@@ -117,53 +129,102 @@ public class ControllerClass {
 		return(serv.authenticate(user,pass));
 		
 	}*/
-	@PostMapping("/provide_user_password_details")
-	public Map<String,String>input(@ModelAttribute user_password data)
-	{
+	@PostMapping("/user_password")
+	public Map<String,String>input(@ModelAttribute user_password data, Users u)
+	{  
 		Map<String,String>m=new HashMap<>();
+	
 		UUID id=data.getId();
 		UUID user_id=data.getUser_id();
 
 		String pass=data.getPassword();
 		String hash_pass=serv.getMd5(pass);
 		byte[] salt=serv.getNextSalt();
-		String act_dir=data.getActivedirectoryname();
-		int auth=data.getAuthrole();
-		String email=data.getEmail();
-		String fname=data.getFirstname();
-		String lname=data.getLastname();
-		String region=data.getRegion();
+//		String act_dir=data.getActivedirectoryname();
+//		int auth=data.getAuthrole();
+//		String email=data.getEmail();
+//		String fname=data.getFirstname();
+//		String lname=data.getLastname();
+//		String region=data.getRegion();
 		
-		serv.update2(user_id,pass,hash_pass,String.valueOf(salt),act_dir,auth,email,fname,lname,region);
+//		serv.update2(user_id,pass,hash_pass,String.valueOf(salt));
 		
 		m.put("password",pass);
 		m.put("hash_password",hash_pass);
 		m.put("salt_pass",String.valueOf(salt));
-		m.put("activedirectoryname",act_dir);
-	//	m.put("authrole",auth);
-		m.put("email",email);
-		m.put("firstname",fname);
-		m.put("lastname",lname);
-		m.put("region",region);
-		System.out.println("id="+id);
+//		
+//	//	m.put("authrole",auth);
+////		m.put("email",email);
+////		m.put("firstname",fname);
+////		m.put("lastname",lname);
+////		m.put("region",region);
+//		System.out.println("id="+id);
 		return m;
-		
+//		
 	}
 	
-	@PostMapping("/usersdetails")
-	public UUID getuser(@ModelAttribute Users data)
+	@PostMapping("/insales")
+	public UUID insert(@ModelAttribute Salesorg data)
 	{
-		String act_dir=data.getActivedir();
+		
+		String country =data.getCountry();
+		String currency =data.getCurrency();
+		int plants =data.getPlants();
+		String bergu=data.getBergu();
+		String sales_organisation =data.getSales_organisation();
+		 UUID id = serv.insert1(country,currency,plants,bergu,sales_organisation );
+//		data.setId(id);
+//		data.getId();
+//		System.out.println(id);
+//		int authorisation_role =data.getAuthorisation_role();
+//		String sales_organisation=data.getSales_organisation();
+//		//String sales_organisation =data.getSales_organisation();
+//		
+//		String password=data.getPassword();
+//		serv.insert(country,currency,plants,bergu,sales_organisation);
+		return id;
+	}
+	
+	
+//	
+	
+	@PostMapping("/details")
+	public ResponseEntity<Object> createuser(@Valid @ModelAttribute Users data, BindingResult result) throws MethodArgumentNotValidException
+	{
+//		
+		 if (result.hasErrors()) {
+        throw new MethodArgumentNotValidException(null, result);
+//        return true;
+         } 
+
+		 else {
+//		UUID sales = datapass.getId();
+//		data.setSales_org(sales);
 		String fname=data.getFirst_name();
 		String lname=data.getLast_name();
-		String emailid=data.getEmailid();
+		String email_id=data.getEmail_id();
 		String region=data.getRegion();
-		UUID sales=data.getSales_org();
+		UUID salesorg=data.getSales_org();
 		int authrole=data.getAuthorisation_role();
-		UUID id= serv.update3(sales,fname,lname,emailid,region,act_dir,authrole);
-		Map<String,String>m=new HashMap<>();
-		m.put("active_directory", act_dir);
-		return id;
+		String pass = data.getPassword();
+		String hash_pass=serv.getMd5(pass);
+		byte[] salt=serv.getNextSalt();
+		String s = String.valueOf(salt);
+		String active_directory = data.getActive_directory();
+		 serv.insert(salesorg,fname,lname,email_id,region,active_directory ,authrole,hash_pass,s );
+//		data.setId(id);
+//		Map<String,String>m=new HashMap<>();
+//		m.put("active_directory", act_dir);
+//		return id;
+		 
+		 Map<String,Object> body = new HashMap<>();
+		 body.put("error", false);
+		
+		 return new ResponseEntity<>(body ,HttpStatus.OK);
+		 }
+		
+//		 return ResponseEntity.ok("User data is valid");
+		 
 		
 	}
 	

@@ -176,39 +176,93 @@ import org.springframework.stereotype.Service;
 				
 				return m;
 			}*/
-			@Override
-			public void update2(UUID user_id,String pass, String hash_pass, String salt, String act_dir, int auth, String email,
-					String fname, String lname, String region) {
-				// TODO Auto-generated method stub
-				jdbcTemplate.update("insert into user_password (user_id,hash_password,salt_password,password,activedirectoryname,authrole,email,firstname,lastname,region) values (?,?,?,?,?,?,?,?,?,?)",user_id,hash_pass,salt,pass,act_dir,auth,email,fname,lname,region);
-				
-			}
+//			@Override
+//			public void update2(UUID user_id,String pass, String hash_pass, String salt) {
+//				// TODO Auto-generated method stub
+//				jdbcTemplate.update("insert into user_password (user_id,hash_password,salt_password,password,activedirectoryname,authrole,email,firstname,lastname,region) values (?,?,?,?,?,?,?,?,?,?)",user_id,hash_pass,salt,pass,act_dir,auth,email,fname,lname,region);
+//				
+//			}
+			
+			
+			
+			
+			
 			@Autowired 
 			NamedParameterJdbcTemplate temp;
 			@Override
-			public UUID update3(UUID sales,String fname, String lname, String emailid, String region,String act_dir, int authrole) {
+			public UUID insert1(String country, String currency, int plants, String bergu, String sales_organisation) {
 				// TODO Auto-generated method stub
 				KeyHolder keyHolder = new GeneratedKeyHolder();
 			//	SqlParameterSource data = new BeanPropertySqlParameterSource(users);
 			//	jdbcTemplate.update("insert into users (first_name,last_name,region,active_directory,email_id,authorisation_role) values (?,?,?,?,?,?)",fname,lname,region,act_dir,emailid,authrole);
 			//	return jdbcTemplate.queryForObject("select id from users where sales_organisation=?",UUID.class,sales);
-				String sql="insert into users (first_name,last_name,region,active_directory,email_id,authorisation_role) values (?,?,?,?,?,?)";
+				String sql="with rows as (insert into sales_organisation (country,currency,plants,bergu,sales_organisation) values (?,?,?,?,?) RETURING id)";
+			
 				jdbcTemplate.update(connection -> {
 			        PreparedStatement preparedStatement = connection.prepareStatement(sql, new String[]{"id"});
-			        preparedStatement.setString(1, fname);
-			        preparedStatement.setString(2, lname);
-			        preparedStatement.setString(3, region);
-			        preparedStatement.setString(4, act_dir);
-			        preparedStatement.setString(5, emailid);
-			        preparedStatement.setInt(6, authrole);
+			        preparedStatement.setString(1, country);
+			        preparedStatement.setString(2, currency);
+			        preparedStatement.setInt(3, plants);
+			        preparedStatement.setString(4, bergu);
+			        preparedStatement.setString(5, sales_organisation);
+			        
 			        return preparedStatement;
 			    }, keyHolder);
 			//    return String.valueOf(keyHolder.getKeyList().get(0).get("id"));
 				return (UUID) keyHolder.getKeyList().get(0).get("id");	
 			}
+
+
 			
 			
-	}
+			
+			
+//			@Autowired 
+//			NamedParameterJdbcTemplate temp;
+			@Override
+			public void insert(UUID salesorg,String fname, String lname, String email_id, String region, String active_directory, int authrole,String hash_pass ,String s) {
+				// TODO Auto-generated method stub
+//				KeyHolder keyHolder = new GeneratedKeyHolder();
+			//	SqlParameterSource data = new BeanPropertySqlParameterSource(users);
+			//	jdbcTemplate.update("insert into users (first_name,last_name,region,active_directory,email_id,authorisation_role) values (?,?,?,?,?,?)",fname,lname,region,act_dir,emailid,authrole);
+			//	return jdbcTemplate.queryForObject("select id from users where sales_organisation=?",UUID.class,sales);
+				String sql=" INSERT into users (first_name,last_name,region,active_directory,email_id,authorisation_role,sales_organisation,password) values (?,?,?,?,?,?,?,?) ";
+				jdbcTemplate.update(sql,fname,lname,region,active_directory,email_id,authrole,salesorg,hash_pass);
+				
+				String l = "update users SET sales_organisation = sales_organisation.id from sales_organisation WHERE sales_organisation.country = users.region";
+				jdbcTemplate.update(l);
+				
+				
+				String p = "insert into user_password(hash_password,salt_password) values(?,?)";
+				jdbcTemplate.update(p,hash_pass,s);
+				jdbcTemplate.update("update user_password SET user_id = users.id from users WHERE users.password = user_password.hash_password");
+				
+				
+//				String query = "Insert into users (sales_organisation) WHERE region = 'IN' SELECT id from sales_organisation WHERE country = 'IN' ";
+//				jdbcTemplate.update(query);
+//				WITH getval(id) as
+//			    (INSERT INTO table_a (some_col) VALUES (some_val) RETURNING id) 
+//			INSERT into table_b (id) SELECT id from getval;
+				
+//				jdbcTemplate.update(connection -> {
+//			        PreparedStatement preparedStatement = connection.prepareStatement(sql, new String[]{"id"});
+//			        preparedStatement.setString(1, fname);
+//			        preparedStatement.setString(2, lname);
+//			        preparedStatement.setString(3, region);
+//			        preparedStatement.setString(4, active_directory);
+//			        preparedStatement.setString(5, email_id);
+//			        preparedStatement.setInt(6, authrole);
+//			        preparedStatement.setObject(7,salesorg);
+//			        preparedStatement.setString(8, hash_pass);
+//			        
+//			        return preparedStatement;
+//			    }, keyHolder);
+//			//    return String.valueOf(keyHolder.getKeyList().get(0).get("id"));
+//				return (UUID) keyHolder.getKeyList().get(0).get("id");	
+			}
+			
+			
+			}
 	
 				
 
