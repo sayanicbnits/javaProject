@@ -18,12 +18,14 @@ import java.util.UUID;
 import com.cbnits.CBNITS_TRADE.UsersPackage.Users;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
+import javax.sql.DataSource;
 
 import org.apache.tomcat.util.digester.DocumentProperties.Charset;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -187,30 +189,30 @@ import org.springframework.stereotype.Service;
 			
 			
 			
-			@Autowired 
-			NamedParameterJdbcTemplate temp;
-			@Override
-			public UUID insert1(String country, String currency, int plants, String bergu, String sales_organisation) {
-				// TODO Auto-generated method stub
-				KeyHolder keyHolder = new GeneratedKeyHolder();
-			//	SqlParameterSource data = new BeanPropertySqlParameterSource(users);
-			//	jdbcTemplate.update("insert into users (first_name,last_name,region,active_directory,email_id,authorisation_role) values (?,?,?,?,?,?)",fname,lname,region,act_dir,emailid,authrole);
-			//	return jdbcTemplate.queryForObject("select id from users where sales_organisation=?",UUID.class,sales);
-				String sql="with rows as (insert into sales_organisation (country,currency,plants,bergu,sales_organisation) values (?,?,?,?,?) RETURING id)";
-			
-				jdbcTemplate.update(connection -> {
-			        PreparedStatement preparedStatement = connection.prepareStatement(sql, new String[]{"id"});
-			        preparedStatement.setString(1, country);
-			        preparedStatement.setString(2, currency);
-			        preparedStatement.setInt(3, plants);
-			        preparedStatement.setString(4, bergu);
-			        preparedStatement.setString(5, sales_organisation);
-			        
-			        return preparedStatement;
-			    }, keyHolder);
-			//    return String.valueOf(keyHolder.getKeyList().get(0).get("id"));
-				return (UUID) keyHolder.getKeyList().get(0).get("id");	
-			}
+//			@Autowired 
+//			NamedParameterJdbcTemplate temp;
+//			@Override
+//			public UUID insert1(String country, String currency, int plants, String bergu, String sales_organisation) {
+//				// TODO Auto-generated method stub
+//				KeyHolder keyHolder = new GeneratedKeyHolder();
+//			//	SqlParameterSource data = new BeanPropertySqlParameterSource(users);
+//			//	jdbcTemplate.update("insert into users (first_name,last_name,region,active_directory,email_id,authorisation_role) values (?,?,?,?,?,?)",fname,lname,region,act_dir,emailid,authrole);
+//			//	return jdbcTemplate.queryForObject("select id from users where sales_organisation=?",UUID.class,sales);
+//				String sql="with rows as (insert into sales_organisation (country,currency,plants,bergu,sales_organisation) values (?,?,?,?,?) RETURING id)";
+//			
+//				jdbcTemplate.update(connection -> {
+//			        PreparedStatement preparedStatement = connection.prepareStatement(sql, new String[]{"id"});
+//			        preparedStatement.setString(1, country);
+//			        preparedStatement.setString(2, currency);
+//			        preparedStatement.setInt(3, plants);
+//			        preparedStatement.setString(4, bergu);
+//			        preparedStatement.setString(5, sales_organisation);
+//			        
+//			        return preparedStatement;
+//			    }, keyHolder);
+//			//    return String.valueOf(keyHolder.getKeyList().get(0).get("id"));
+//				return (UUID) keyHolder.getKeyList().get(0).get("id");	
+//			}
 
 
 			
@@ -261,8 +263,72 @@ import org.springframework.stereotype.Service;
 //				return (UUID) keyHolder.getKeyList().get(0).get("id");	
 			}
 			
+		
+			@Override
+			public  Map <String,Object> fetch(UUID user_id,String password, UUID sales_orgs) {
+//				String sql="select * from users where id = ? and sales_organisation = ?";
+//				 jdbcTemplate.update(sql,user_id,sales_orgs);
+				
+				 Map <String,Object> m =new HashMap<>();
+				 
+				 String md5pass=getMd5(password);
+                
+				//				 String sql = ;
+//				String salt = (String)
+//				 JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+				    String sql = "select salt_password from user_password where user_id=?";
+
+				    String salt = (String) jdbcTemplate.queryForObject(sql, String.class, user_id );
+
+//				jdbcTemplate.update("select salt_password from user_password where user_id=?",user_id);
+//					System.out.println(salt);
+					byte bytesalt[]=salt.getBytes();
+//					System.out.println("bytesalt: "+bytesalt);
+					byte b1 []=hash(md5pass.toCharArray(),bytesalt);
+//					System.out.println("b1 :"+b1);
+				//	String s=new String (passed);
+				//	System.out.println("s= "+s);
+					
+				
+					String md5db=(String)jdbcTemplate.queryForObject("select hash_password from user_password where user_id=?",String.class,user_id);
+//					System.out.println("md5db: "+md5db);
+					byte b2[]=hash(md5db.toCharArray(),bytesalt);
+					
+//					System.out.println("b2: "+b2);
+				//	String s1=new String (hashedpbyte);
+				//	System.out.println("s1= "+s1);
+					if(Arrays.equals(b1,b2))
+					{
+//					    and sales_organisation = ? 
+						String f = (String)(jdbcTemplate.queryForObject("select first_name from users where id = ? ",String.class,user_id));
+						String l = (String)(jdbcTemplate.queryForObject("select last_name from users where id = ? ",String.class,user_id));
+						String a = (String)(jdbcTemplate.queryForObject("select authorisation_role from users where id = ? ",String.class,user_id));
+						String i = (String)(jdbcTemplate.queryForObject("select sales_organisation from users where id = ? ",String.class,user_id));
+						String r = (String)(jdbcTemplate.queryForObject("select region from users where id = ? ",String.class,user_id));
+//						
+						m.put("Status","Success");
+						m.put("first_name", f);
+						m.put("last_name", l);
+						m.put("auth_role", a);
+						m.put("sales_id", i);
+						m.put("salesorg_name", r);
+						
+						return m;
+						//jdbcTemplate.update("insert into user_login (id,login,user_id) values (?,?,?)",user,LocalDateTime.now(),null);
+					}	
+					else 
+						m.put("Status","NOT ALLOWED!!! PLEASE ENTER CORRECT PASSWORD");
+						return m;
+					}
 			
+//					catch(IncorrectResultSizeDataAccessException e)
+//					{
+//						m.put("Status","PLEASE ENTER REGISTERED USER_ID");
+//					}
 			}
+			
+			
+
 	
 				
 

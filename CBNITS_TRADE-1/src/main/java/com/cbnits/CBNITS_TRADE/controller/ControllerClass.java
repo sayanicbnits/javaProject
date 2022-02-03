@@ -28,7 +28,7 @@ import org.springframework.validation.BindException;
 //import com.cbnits.CBNITS_TRADE.EntityPackage.EntityClass;
 //import com.example.demo.ServicePackage.ServiceInterface;
 import com.cbnits.CBNITS_TRADE.ServicePackage.ServiceInterface;
-import com.cbnits.CBNITS_TRADE.UsersPackage.Salesorg;
+import com.cbnits.CBNITS_TRADE.UsersPackage.UserLogin;
 import com.cbnits.CBNITS_TRADE.UsersPackage.Users;
 import com.cbnits.CBNITS_TRADE.user_passwordpackage.user_password;
 
@@ -163,30 +163,8 @@ public class ControllerClass {
 //		
 	}
 	
-	@PostMapping("/insales")
-	public UUID insert(@ModelAttribute Salesorg data)
-	{
-		
-		String country =data.getCountry();
-		String currency =data.getCurrency();
-		int plants =data.getPlants();
-		String bergu=data.getBergu();
-		String sales_organisation =data.getSales_organisation();
-		 UUID id = serv.insert1(country,currency,plants,bergu,sales_organisation );
-//		data.setId(id);
-//		data.getId();
-//		System.out.println(id);
-//		int authorisation_role =data.getAuthorisation_role();
-//		String sales_organisation=data.getSales_organisation();
-//		//String sales_organisation =data.getSales_organisation();
-//		
-//		String password=data.getPassword();
-//		serv.insert(country,currency,plants,bergu,sales_organisation);
-		return id;
-	}
-	
-	
-//	
+
+
 	
 	@PostMapping("/details")
 	public ResponseEntity<Object> createuser(@Valid @ModelAttribute Users data, BindingResult result) throws MethodArgumentNotValidException
@@ -226,6 +204,17 @@ public class ControllerClass {
 //		 return ResponseEntity.ok("User data is valid");
 		 
 		
+	}
+	
+	@PostMapping("/auth")
+	public Map <String,Object> get(@ModelAttribute UserLogin login) {
+		UUID user_id = login .getUser_id();
+		UUID sales_orgs = login.getSales_orgs();
+		String password = login.getPassword();
+		Map<String, Object> map = new HashMap<String, Object>();
+		map = serv.fetch(user_id,password , sales_orgs);
+		
+		return map;
 	}
 	
 	

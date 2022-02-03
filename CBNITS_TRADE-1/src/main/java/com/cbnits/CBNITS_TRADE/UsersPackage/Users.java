@@ -18,7 +18,6 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Range;
 
-import com.sun.istack.NotNull;
 
 @Entity
 @Table(name="users" ,

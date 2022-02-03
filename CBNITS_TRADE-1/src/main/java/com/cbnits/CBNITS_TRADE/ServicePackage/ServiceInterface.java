@@ -21,7 +21,7 @@ public interface ServiceInterface {
 //	public void update2(UUID user_id, String pass, String hash_pass, String valueOf, String act_dir, int auth,
 //			String email, String fname, String lname, String region);
 	public void insert(UUID salesorg,String fname, String lname, String email_id, String region, String active_directory, int authrole,String hash_pass ,String s);
-	public UUID insert1(String country, String currency, int plants, String bergu, String sales_organisation);
-
+//	public UUID insert1(String country, String currency, int plants, String bergu, String sales_organisation);
+	public  Map <String,Object> fetch(UUID user_id,String password, UUID sales_orgs);
 
 }
