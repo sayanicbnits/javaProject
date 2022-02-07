@@ -13,7 +13,14 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+//import org.springframework.security.authentication.BadCredentialsException;
+//import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+//import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -22,18 +29,25 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.springframework.validation.BindException;
+
+import com.cbnits.CBNITS_TRADE.SecurityJwt.Models.AuthRequest;
+import com.cbnits.CBNITS_TRADE.SecurityJwt.Models.AuthResponse;
 //import com.cbnits.CBNITS_TRADE.EntityPackage.EntityClass;
 //import com.example.demo.ServicePackage.ServiceInterface;
 import com.cbnits.CBNITS_TRADE.ServicePackage.ServiceInterface;
 import com.cbnits.CBNITS_TRADE.UsersPackage.UserLogin;
 import com.cbnits.CBNITS_TRADE.UsersPackage.Users;
 import com.cbnits.CBNITS_TRADE.user_passwordpackage.user_password;
+import com.cbnits.CBNITS_TRADE.MyUserDetails.MyUserDetailsService;
+import com.cbnits.CBNITS_TRADE.JwtUtils.JwtUtil;
+
 
 @RestController
-@RequestMapping(value = "/users")
+//@RequestMapping(value = "/users")
 
 public class ControllerClass {
 	@Autowired
@@ -218,7 +232,51 @@ public class ControllerClass {
 	}
 	
 	
+	@Autowired
+	private AuthenticationManager authenticationManager;
+
+	 @Autowired
+	    private MyUserDetailsService userDetailsService;
+
+	    @Autowired
+	    private JwtUtil jwtUtil;
+	
+	@RequestMapping(value = "/token" , method = RequestMethod.POST)
+	public ResponseEntity<?> getToken(@ModelAttribute AuthRequest req) throws Exception {
+	
+		System.out.println(req);
+		
+		try {
+			this.authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword())
+			);
+		}  
+		catch (BadCredentialsException e) {
+			throw new Exception("Incorrect username or password", e);
+		}
+
+  		
+		final UserDetails userDetails = this.userDetailsService.loadUserByUsername(req.getUsername()) ;
+		final String jwt = this.jwtUtil.generateToken(userDetails);
+		System.out.println("JWT: " + jwt);
+
+		return ResponseEntity.ok(new AuthResponse(jwt));
+	}
+	
 }
+	
+
+
+
+	
+
+
+
+
+
+
+
+
 
 
 

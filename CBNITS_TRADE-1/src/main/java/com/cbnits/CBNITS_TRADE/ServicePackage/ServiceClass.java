@@ -273,9 +273,6 @@ import org.springframework.stereotype.Service;
 				 
 				 String md5pass=getMd5(password);
                 
-				//				 String sql = ;
-//				String salt = (String)
-//				 JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
 				    String sql = "select salt_password from user_password where user_id=?";
 
 				    String salt = (String) jdbcTemplate.queryForObject(sql, String.class, user_id );
@@ -303,15 +300,17 @@ import org.springframework.stereotype.Service;
 						String f = (String)(jdbcTemplate.queryForObject("select first_name from users where id = ? ",String.class,user_id));
 						String l = (String)(jdbcTemplate.queryForObject("select last_name from users where id = ? ",String.class,user_id));
 						String a = (String)(jdbcTemplate.queryForObject("select authorisation_role from users where id = ? ",String.class,user_id));
-						String i = (String)(jdbcTemplate.queryForObject("select sales_organisation from users where id = ? ",String.class,user_id));
+//						String i = (String)(jdbcTemplate.queryForObject("select sales_organisation from users where id = ? ",String.class,user_id));
 						String r = (String)(jdbcTemplate.queryForObject("select region from users where id = ? ",String.class,user_id));
-//						
+//						String d = (String)(jdbcTemplate.queryForObject("select active_directory from users where id = ? ",String.class,user_id));
+						
 						m.put("Status","Success");
 						m.put("first_name", f);
 						m.put("last_name", l);
 						m.put("auth_role", a);
-						m.put("sales_id", i);
+//						m.put("sales_id", i);
 						m.put("salesorg_name", r);
+//						m.put("active_dir", d);
 						
 						return m;
 						//jdbcTemplate.update("insert into user_login (id,login,user_id) values (?,?,?)",user,LocalDateTime.now(),null);
@@ -325,6 +324,19 @@ import org.springframework.stereotype.Service;
 //					{
 //						m.put("Status","PLEASE ENTER REGISTERED USER_ID");
 //					}
+			
+			@Override
+			public String check(String username, String password) {
+				// TODO Auto-generated method stub
+//				String f = (String)(jdbcTemplate.queryForObject("select first_name from users where id = ? ",String.class,username));
+				if(username.equals("Ruhaan"))
+				{
+					return username;
+				}
+				else 
+					return null;
+			}
+			
 			}
 			
 			
