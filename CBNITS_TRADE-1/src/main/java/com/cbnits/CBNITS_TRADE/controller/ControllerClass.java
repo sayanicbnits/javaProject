@@ -1,8 +1,9 @@
 package com.cbnits.CBNITS_TRADE.controller;
 //import java.nio.charset.StandardCharsets;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.List;
 import java.util.Map;
 
 import java.util.UUID;
@@ -244,7 +245,6 @@ public class ControllerClass {
 	@RequestMapping(value = "/token" , method = RequestMethod.POST)
 	public ResponseEntity<?> getToken(@ModelAttribute AuthRequest req) throws Exception {
 	
-		System.out.println(req);
 		
 		try {
 			this.authenticationManager.authenticate(
@@ -261,6 +261,13 @@ public class ControllerClass {
 		System.out.println("JWT: " + jwt);
 
 		return ResponseEntity.ok(new AuthResponse(jwt));
+	}
+	
+	@GetMapping("/fetchuser")
+	public ResponseEntity<?> fetchuser() {
+		List<Users> l = new ArrayList();
+		l = serv.userList();
+		return ResponseEntity.ok(l);
 	}
 	
 }

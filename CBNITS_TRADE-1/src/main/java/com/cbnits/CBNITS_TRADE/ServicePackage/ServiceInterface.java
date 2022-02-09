@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.cbnits.CBNITS_TRADE.UsersPackage.Users;
+
 //import com.cbnits.CBNITS_TRADE.EntityPackage.EntityClass;
 
 public interface ServiceInterface {
@@ -23,6 +25,7 @@ public interface ServiceInterface {
 	public void insert(UUID salesorg,String fname, String lname, String email_id, String region, String active_directory, int authrole,String hash_pass ,String s);
 //	public UUID insert1(String country, String currency, int plants, String bergu, String sales_organisation);
 	public  Map <String,Object> fetch(UUID user_id,String password, UUID sales_orgs);
-	String check(String username, String password);
+//	String check(String username, String password);
+	public List<Users> userList();
 	
 }

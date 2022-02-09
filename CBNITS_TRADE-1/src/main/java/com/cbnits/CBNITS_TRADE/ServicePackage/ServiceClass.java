@@ -8,6 +8,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+
+import com.cbnits.CBNITS_TRADE.SecurityJwt.Models.AuthRequest;
 import com.cbnits.CBNITS_TRADE.UsersPackage.Users;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -25,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -325,17 +330,47 @@ import org.springframework.stereotype.Service;
 //						m.put("Status","PLEASE ENTER REGISTERED USER_ID");
 //					}
 			
+//			@Override
+//			public String check(String username, String password) {
+//				// TODO Auto-generated method stub
+////				String f = (String)(jdbcTemplate.queryForObject("select first_name from users where password = ? ",String.class,password));
+//				if(username.equals("Ruhaan"))
+//				{
+//					return username;
+//				}
+//				else 
+//					return null;
+//			}
+			
+
 			@Override
-			public String check(String username, String password) {
-				// TODO Auto-generated method stub
-//				String f = (String)(jdbcTemplate.queryForObject("select first_name from users where id = ? ",String.class,username));
-				if(username.equals("Ruhaan"))
-				{
-					return username;
-				}
-				else 
-					return null;
+			public List<Users> userList() {
+				List<Users> list = jdbcTemplate.query("SELECT * FROM users", new RowMapper<Users>() {
+
+					@Override
+					public Users mapRow(ResultSet rs, int rowNum) throws SQLException {
+						Users u = new Users();
+
+						u.setId(UUID.fromString(String.valueOf(rs.getObject("id"))));
+						u.setFirst_name(rs.getString("first_name"));
+						u.setLast_name(rs.getString("last_name"));
+						u.setRegion(rs.getString("region"));
+						u.setActive_directory(rs.getString("active_directory"));
+						u.setEmail_id(rs.getString("email_id"));
+						u.setAuthorisation_role(rs.getInt("authorisation_role"));
+						u.setSales_org(UUID.fromString(String.valueOf(rs.getObject("sales_organisation"))));
+						u.setPassword(rs.getString("password"));
+						
+						return u;
+					}
+
+				});
+
+				return list;
 			}
+
+			
+			
 			
 			}
 			
