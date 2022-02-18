@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+
 import com.cbnits.CBNITS_TRADE.UsersPackage.Users;
 
 //import com.cbnits.CBNITS_TRADE.EntityPackage.EntityClass;
@@ -27,5 +30,7 @@ public interface ServiceInterface {
 	public  Map <String,Object> fetch(UUID user_id,String password, UUID sales_orgs);
 //	String check(String username, String password);
 	public List<Users> userList();
+	public void createCell(Row row, int columnCount, Object value, CellStyle style);
+	
 	
 }

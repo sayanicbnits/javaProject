@@ -24,6 +24,10 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.sql.DataSource;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.tomcat.util.digester.DocumentProperties.Charset;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -368,6 +372,26 @@ import org.springframework.stereotype.Service;
 
 				return list;
 			}
+			
+			
+			
+			 private XSSFSheet sheet;
+			@Override
+			public void createCell(Row row, int columnCount, Object value, CellStyle style) {
+			 	
+//		        sheet.autoSizeColumn(columnCount);
+		        Cell cell = row.createCell(columnCount);
+		        if (value instanceof Integer) {
+		            cell.setCellValue((Integer) value);
+		        } else if (value instanceof Boolean) {
+		            cell.setCellValue((Boolean) value);
+		        }else {
+		            cell.setCellValue((String) value);
+		        }
+		        cell.setCellStyle(style);
+		    }
+			
+			
 
 			
 			

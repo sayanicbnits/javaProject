@@ -88,10 +88,10 @@ public class Users {
 		this.sales_org = sales_org;
 	}
 
-	public Users(UUID id, String active_directory, String first_name, String last_name, String region, String email_id,
+	public Users(String active_directory, String first_name, String last_name, String region, String email_id,
 			int authorisation_role, UUID sales_org) {
 		super();
-		this.id = id;
+//		this.id = id;
 		this.active_directory = active_directory;
 		this.first_name = first_name;
 		this.last_name = last_name;

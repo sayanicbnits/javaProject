@@ -9,13 +9,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.cbnits.CBNITS_TRADE.MyUserDetails.MyUserDetailsService;
+import com.fasterxml.jackson.core.JsonParseException;
+
+import io.jsonwebtoken.MalformedJwtException;
+
 import com.cbnits.CBNITS_TRADE.JwtUtils.JwtUtil;
 
 @Component
@@ -26,21 +32,27 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtUtil jwtUtil;
-
+    @Autowired 
+    private AuthenticationEntryPoint authenticationEntryPoint;
+    
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-            throws ServletException, IOException {
+            throws ServletException, IOException , MalformedJwtException , JsonParseException{
 
+    	try {
         final String authorizationHeader = request.getHeader("Authorization");
 
         String username = null;
         String jwt = null;
-
+        
+         
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
             username = jwtUtil.extractUsername(jwt);
         }
 
+     
+       
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
@@ -55,7 +67,13 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }
-        chain.doFilter(request, response);
-    }
+    	} catch(AuthenticationException authenticationException) {
+
+            SecurityContextHolder.clearContext();
+            authenticationEntryPoint.commence(request, response, authenticationException);
+        
+        
+    }chain.doFilter(request, response);
+}
 }
     

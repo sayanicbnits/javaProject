@@ -13,7 +13,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -26,10 +25,10 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter{
 	
 		@Autowired
 		private MyUserDetailsService myUserDetailsService;
+		
 		@Autowired
 		private JwtFilter jwtFilter;
-
-//		@Autowired
+		
 		@Override
 		public void configure(AuthenticationManagerBuilder auth) throws Exception {
 			auth.userDetailsService(myUserDetailsService).passwordEncoder(passwordEncoder());
@@ -91,22 +90,33 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter{
 		public AuthenticationManager authenticationManagerBean() throws Exception {
 			return super.authenticationManagerBean();
 		}
+		@Autowired
+	    private RestAuthenticationEntryPoint authEntryPoint;  
+		
+//		@Autowired
+//		private RestAccessDeniedHandler accessDeniedHandler;
 
 		@Override
-		protected void configure(HttpSecurity httpSecurity) throws Exception {
-			httpSecurity
+		protected void configure(HttpSecurity http) throws Exception {
+			http
 			.csrf()
 			.disable()
 			.authorizeRequests()
-			.antMatchers("/token").permitAll()
+			.antMatchers("/token","/export/excel","/insertExcel").permitAll()
 			.anyRequest().authenticated()
 			.and()
 			.exceptionHandling()
+			.authenticationEntryPoint(authEntryPoint)
+//			.accessDeniedHandler(accessDeniedHandler)
 			.and()
 			.sessionManagement()
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-			httpSecurity.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+			http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
 		}
+//		@Bean
+//	    public AuthenticationFailureHandler authenticationFailureHandler() {
+//	        return new CustomAuthenticationFailureHandler();
+//	    }
 }
 

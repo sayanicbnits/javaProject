@@ -1,27 +1,48 @@
 package com.cbnits.CBNITS_TRADE.controller;
 //import java.nio.charset.StandardCharsets;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-//import org.springframework.security.authentication.BadCredentialsException;
-//import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-//import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -33,16 +54,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import org.springframework.validation.BindException;
 
 import com.cbnits.CBNITS_TRADE.SecurityJwt.Models.AuthRequest;
 import com.cbnits.CBNITS_TRADE.SecurityJwt.Models.AuthResponse;
-//import com.cbnits.CBNITS_TRADE.EntityPackage.EntityClass;
-//import com.example.demo.ServicePackage.ServiceInterface;
+
 import com.cbnits.CBNITS_TRADE.ServicePackage.ServiceInterface;
+import com.cbnits.CBNITS_TRADE.UserExcel.UserExcelExporter;
 import com.cbnits.CBNITS_TRADE.UsersPackage.UserLogin;
 import com.cbnits.CBNITS_TRADE.UsersPackage.Users;
 import com.cbnits.CBNITS_TRADE.user_passwordpackage.user_password;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.cbnits.CBNITS_TRADE.MyUserDetails.MyUserDetailsService;
 import com.cbnits.CBNITS_TRADE.JwtUtils.JwtUtil;
 
@@ -243,17 +264,23 @@ public class ControllerClass {
 	    private JwtUtil jwtUtil;
 	
 	@RequestMapping(value = "/token" , method = RequestMethod.POST)
-	public ResponseEntity<?> getToken(@ModelAttribute AuthRequest req) throws Exception {
+	public ResponseEntity<?> getToken(@ModelAttribute AuthRequest req , BindingResult r) throws RuntimeException  {
 	
-		
-		try {
-			this.authenticationManager.authenticate(
+//		try {
+//			authenticationManager.authenticate(
+//					new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword())
+//			);
+//		}
+		if(r.hasErrors()) {
+			 throw new RuntimeException("Invalid user");
+		}
+		else {
+			authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(req.getUsername(), req.getPassword())
 			);
-		}  
-		catch (BadCredentialsException e) {
-			throw new Exception("Incorrect username or password", e);
 		}
+		
+		
 
   		
 		final UserDetails userDetails = this.userDetailsService.loadUserByUsername(req.getUsername()) ;
@@ -261,6 +288,7 @@ public class ControllerClass {
 		System.out.println("JWT: " + jwt);
 
 		return ResponseEntity.ok(new AuthResponse(jwt));
+	
 	}
 	
 	@GetMapping("/fetchuser")
@@ -270,23 +298,90 @@ public class ControllerClass {
 		return ResponseEntity.ok(l);
 	}
 	
+	@GetMapping("/export/excel")
+    public void exportToExcel(HttpServletResponse response) throws IOException {
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+//         
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=users_" + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+         
+        List<Users> listUsers = serv.userList();
+         
+        UserExcelExporter excelExporter = new UserExcelExporter(listUsers);
+         
+        excelExporter.export(response);    
+    }
+	@Autowired
+    		JdbcTemplate jdbcTemplate;
+	@PostMapping("/insertExcel")
+	public void insertInExcel(@ModelAttribute Users data) throws InvalidFormatException {
+	
+		String excelFilePath = "C:\\Users\\cbnits\\Downloads\\users_2022-02-17_16_22_48.xlsx";
+        
+        try {
+            FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
+            Workbook workbook = WorkbookFactory.create(inputStream);
+ 
+            Sheet sheet = workbook.getSheetAt(0);
+           
+    		String salesorg=String.valueOf(data.getSales_org());
+
+    		String pass = data.getPassword();
+    		String hash_pass=serv.getMd5(pass);
+    		
+//    		String l = "update users SET sales_organisation = sales_organisation.id from sales_organisation WHERE sales_organisation.country = users.region";
+//			jdbcTemplate.update(l);
+			
+//			String r = (String)(jdbcTemplate.queryForObject("select id from sales_organisation where country = 'AUS'   ",String.class));
+    		     
+    				UUID uuid = UUID.randomUUID();
+    		    	int rowCount = sheet.getLastRowNum()+1;
+    		 
+    		        CellStyle style = workbook.createCellStyle();
+    		        XSSFFont font = (XSSFFont) workbook.createFont();
+    		        font.setFontHeight(14);
+    		        style.setFont(font);
+    		                 
+    		       
+    		            Row row = sheet.createRow(rowCount);
+    		            int columnCount = 0;
+    		             
+    		            serv.createCell(row, columnCount++,String.valueOf(uuid), style);
+    		            serv.createCell(row, columnCount++, data.getFirst_name(), style);
+    		            serv.createCell(row, columnCount++, data.getLast_name(), style);
+    		            serv.createCell(row, columnCount++, data.getRegion(), style);
+    		            serv.createCell(row, columnCount++, data.getActive_directory(), style);
+    		            serv.createCell(row, columnCount++, data.getEmail_id(), style);
+    		            serv.createCell(row, columnCount++, data.getAuthorisation_role(), style);
+    		            serv.createCell(row, columnCount++,salesorg, style);
+    		            serv.createCell(row, columnCount++, hash_pass, style);
+    		             
+    		        
+    		   
+    		inputStream.close();
+ 
+            FileOutputStream outputStream = new FileOutputStream("C:\\Users\\cbnits\\Downloads\\users_2022-02-17_16_22_48.xlsx");
+            workbook.write(outputStream);
+            workbook.close();
+            outputStream.close();
+         }
+	
+        catch (IOException | EncryptedDocumentException ex) {
+            ex.printStackTrace();
+        }
+    }		     
+	         
+    		 
 }
+
+			
+     
+	            
+
+ 
+
+
 	
-
-
-
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-

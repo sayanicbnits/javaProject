@@ -20,6 +20,10 @@ public class ErrorDetails {
 //		    return Boolean.TRUE.toString();
 //		}
 
+	public ErrorDetails() {
+		super();
+	}
+
 	public String getMessage() {
 		return message;
 	}

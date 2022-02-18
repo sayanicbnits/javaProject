@@ -1,26 +1,26 @@
 package com.cbnits.CBNITS_TRADE.Exception;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
-
-import java.net.BindException;
-import java.util.*;
-
-import javax.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import org.springframework.validation.FieldError;
-import java.util.stream.Collectors;
-import org.springframework.validation.ObjectError;
+
+import com.fasterxml.jackson.core.JsonParseException;
+
+import io.jsonwebtoken.MalformedJwtException;
 
 
 @ControllerAdvice
@@ -72,22 +72,48 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
 	//returning exception structure and specific status  
 	return new ResponseEntity<>(errors , HttpStatus.BAD_REQUEST);  
-	}  
-	
+	} 
 
-	public String isValid() {
-		return Boolean.TRUE.toString();
-	}
-	
-	
-	
+//	
+	 @ExceptionHandler(RuntimeException.class)
+	public ResponseEntity<Object> handleRuntimeException(RuntimeException ex){ 
+		 
+//		 return ResponseEntity.badRequest().body("Invalid Details");
+//		 , HttpHeaders headers, HttpStatus status, WebRequest request
+		  Map<String, Object> errors = new HashMap<>();
+		  List<String> message = new ArrayList<String>();
+		  message.add("Invalid username");
+		  message.add("Invalid password");
+		  
+		  ErrorDetails errorDetails = new ErrorDetails( "Validation Failed" , message);
+		  errors.put("Errors", errorDetails);
+		    return new ResponseEntity<Object>(errors, HttpStatus.BAD_REQUEST);
+	 }
+	 
+	 @ExceptionHandler(MalformedJwtException.class)
+		public ResponseEntity<Object> handleMalformedJwtException(MalformedJwtException ex){ 
+			 
+			  
+			  ErrorDetails errorDetails = new ErrorDetails();
+			  errorDetails.setMessage("Bad Credentials");
+			    return new ResponseEntity<Object>(errorDetails, HttpStatus.BAD_REQUEST);
+		 }
+	 
+   
+	 
+	 
+	 
+	 
+}
   
-//  @ExceptionHandler(BindException.class)
+//  @ExceptionHandler(UsernameNotFoundException.class)
 //  @ResponseBody
-//  public ResponseEntity<Object> bindExceptionHandler(BindException bindException, HttpHeaders headers, HttpStatus status, WebRequest request){         
-//	  ErrorDetails errorDetails = new ErrorDetails( new Date(),"Validation Failed",bindException.getMessage());
-//	    return new ResponseEntity<Object>(errorDetails, HttpStatus.BAD_REQUEST);
+//  public ResponseEntity<Object> UsernameNotFoundException(UsernameNotFoundException bindException, HttpHeaders headers, HttpStatus status, WebRequest request){ 
+//	  List<String> message = new ArrayList();
+//	  message.add("Invalid username");
+//	  message.add("Invalid password");
+//	  ErrorDetails errorDetails = new ErrorDetails( "Validation Failed",message);
+//	    return new ResponseEntity<Object>("Invalid User", HttpStatus.BAD_REQUEST);
 // }
  
   
-}
