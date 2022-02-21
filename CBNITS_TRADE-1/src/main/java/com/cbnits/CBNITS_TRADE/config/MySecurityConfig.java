@@ -102,7 +102,7 @@ public class MySecurityConfig extends WebSecurityConfigurerAdapter{
 			.csrf()
 			.disable()
 			.authorizeRequests()
-			.antMatchers("/token","/export/excel","/insertExcel").permitAll()
+			.antMatchers("/token","/export/excel","/insertExcel","/upload").permitAll()
 			.anyRequest().authenticated()
 			.and()
 			.exceptionHandling()

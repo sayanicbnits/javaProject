@@ -16,8 +16,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.cbnits.CBNITS_TRADE.SecurityJwt.Models.ResponseMessage;
 import com.fasterxml.jackson.core.JsonParseException;
 
 import io.jsonwebtoken.MalformedJwtException;
@@ -99,11 +101,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 			    return new ResponseEntity<Object>(errorDetails, HttpStatus.BAD_REQUEST);
 		 }
 	 
+	 @ExceptionHandler(MaxUploadSizeExceededException.class)
+	  public ResponseEntity<ResponseMessage> handleMaxSizeException(MaxUploadSizeExceededException exc) {
+	    return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage("File too large!"));
    
 	 
-	 
-	 
-	 
+	 }
 }
   
 //  @ExceptionHandler(UsernameNotFoundException.class)

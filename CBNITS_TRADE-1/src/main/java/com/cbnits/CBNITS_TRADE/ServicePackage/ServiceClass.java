@@ -1,16 +1,13 @@
 package com.cbnits.CBNITS_TRADE.ServicePackage;
 
+import java.io.IOException;
 import java.math.BigInteger;
-
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -18,32 +15,27 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
-import com.cbnits.CBNITS_TRADE.SecurityJwt.Models.AuthRequest;
-import com.cbnits.CBNITS_TRADE.UsersPackage.Users;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-import javax.sql.DataSource;
+import javax.transaction.Transactional;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.tomcat.util.digester.DocumentProperties.Charset;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-//import com.cbnits.CBNITS_TRADE.EntityPackage.EntityClass;
+import com.cbnits.CBNITS_TRADE.ExcelHelper.ExcelHelper;
+import com.cbnits.CBNITS_TRADE.Repository.UserRepository;
+import com.cbnits.CBNITS_TRADE.UsersPackage.Users;
 
+
+
+//@Transactional
 	@Service
 	public class ServiceClass implements ServiceInterface {
 		public int result() {
@@ -166,7 +158,7 @@ import org.springframework.stereotype.Service;
 			}
 		/*	@Override
 			public Map<String,String> authenticate(String user, String pass) {
-				// TODO Auto-generated method stub
+				
 				Map <String,String>m=new HashMap<>();
 				String salt=jdbcTemplate.queryForObject("select salt from user_password where user_id=?",String.class,user);
 				byte[] salt1=salt.getBytes();
@@ -349,33 +341,35 @@ import org.springframework.stereotype.Service;
 
 			@Override
 			public List<Users> userList() {
-				List<Users> list = jdbcTemplate.query("SELECT * FROM users", new RowMapper<Users>() {
-
-					@Override
-					public Users mapRow(ResultSet rs, int rowNum) throws SQLException {
-						Users u = new Users();
-
-						u.setId(UUID.fromString(String.valueOf(rs.getObject("id"))));
-						u.setFirst_name(rs.getString("first_name"));
-						u.setLast_name(rs.getString("last_name"));
-						u.setRegion(rs.getString("region"));
-						u.setActive_directory(rs.getString("active_directory"));
-						u.setEmail_id(rs.getString("email_id"));
-						u.setAuthorisation_role(rs.getInt("authorisation_role"));
-						u.setSales_org(UUID.fromString(String.valueOf(rs.getObject("sales_organisation"))));
-						u.setPassword(rs.getString("password"));
-						
-						return u;
-					}
-
-				});
-
-				return list;
+				
+				 return repository.findAll();
+//				List<Users> list = jdbcTemplate.query("SELECT * FROM users", new RowMapper<Users>() {
+//
+//					@Override
+//					public Users mapRow(ResultSet rs, int rowNum) throws SQLException {
+//						Users u = new Users();
+//
+//						u.setId(UUID.fromString(String.valueOf(rs.getObject("id"))));
+//						u.setFirst_name(rs.getString("first_name"));
+//						u.setLast_name(rs.getString("last_name"));
+//						u.setRegion(rs.getString("region"));
+//						u.setActive_directory(rs.getString("active_directory"));
+//						u.setEmail_id(rs.getString("email_id"));
+//						u.setAuthorisation_role(rs.getInt("authorisation_role"));
+//						u.setSales_org(UUID.fromString(String.valueOf(rs.getObject("sales_organisation"))));
+//						u.setPassword(rs.getString("password"));
+//						
+//						return u;
+//					}
+//
+//				});
+//
+//				return list;
 			}
 			
 			
 			
-			 private XSSFSheet sheet;
+			 
 			@Override
 			public void createCell(Row row, int columnCount, Object value, CellStyle style) {
 			 	
@@ -392,7 +386,31 @@ import org.springframework.stereotype.Service;
 		    }
 			
 			
+			 @Autowired
+			 UserRepository repository;
 
+			 @Autowired
+			 ExcelHelper excelhelper;
+			 
+			 @Override
+			public void save(MultipartFile file) {
+			    try {
+//			    	System.out.println(file.getInputStream());
+			      List<Users> u = excelhelper.excelToUsers(file.getInputStream());
+//			      System.out.println(u);
+			     
+//			      repository.saveAll(u);
+			    } catch (IOException e) {
+			      throw new RuntimeException("fail to store excel data: " + e.getMessage());
+			    }
+			  }
+			 
+			 @Override
+			 public void insert1(UUID id,UUID sales_org, String fname, String lname, String email_id, String region,String active_directory, int authrole, String pass,String s) {
+				 System.out.println(fname);
+				 String sql=" INSERT into users (id,first_name,last_name,region,active_directory,email_id,authorisation_role,sales_organisation,password) values (?,?,?,?,?,?,?,?,?) ";
+					jdbcTemplate.update(sql,id,fname,lname,region,active_directory,email_id,authrole,sales_org,pass);
+			 }
 			
 			
 			

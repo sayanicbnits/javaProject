@@ -1,6 +1,7 @@
 package com.cbnits.CBNITS_TRADE.controller;
 //import java.nio.charset.StandardCharsets;
 
+import java.awt.PageAttributes.MediaType;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -16,12 +17,14 @@ import java.util.Map;
 
 import java.util.UUID;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -52,19 +55,23 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cbnits.CBNITS_TRADE.SecurityJwt.Models.AuthRequest;
 import com.cbnits.CBNITS_TRADE.SecurityJwt.Models.AuthResponse;
-
+import com.cbnits.CBNITS_TRADE.SecurityJwt.Models.ResponseMessage;
 import com.cbnits.CBNITS_TRADE.ServicePackage.ServiceInterface;
 import com.cbnits.CBNITS_TRADE.UserExcel.UserExcelExporter;
 import com.cbnits.CBNITS_TRADE.UsersPackage.UserLogin;
+//import com.cbnits.CBNITS_TRADE.UsersPackage.UserRepo;
 import com.cbnits.CBNITS_TRADE.UsersPackage.Users;
 import com.cbnits.CBNITS_TRADE.user_passwordpackage.user_password;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.cbnits.CBNITS_TRADE.MyUserDetails.MyUserDetailsService;
+import com.cbnits.CBNITS_TRADE.Repository.UserRepository;
+import com.cbnits.CBNITS_TRADE.ExcelHelper.ExcelHelper;
 import com.cbnits.CBNITS_TRADE.JwtUtils.JwtUtil;
 
 
@@ -300,12 +307,13 @@ public class ControllerClass {
 	
 	@GetMapping("/export/excel")
     public void exportToExcel(HttpServletResponse response) throws IOException {
-        response.setContentType("application/octet-stream");
+//		
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
         String currentDateTime = dateFormatter.format(new Date());
 //         
         String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=users_" + currentDateTime + ".xlsx";
+        String headerValue = "attachment; filename=Users_List" + ".xlsx";
         response.setHeader(headerKey, headerValue);
          
         List<Users> listUsers = serv.userList();
@@ -318,64 +326,191 @@ public class ControllerClass {
     		JdbcTemplate jdbcTemplate;
 	@PostMapping("/insertExcel")
 	public void insertInExcel(@ModelAttribute Users data) throws InvalidFormatException {
+//		XSSFWorkbook workbook1 = new XSSFWorkbook();
+//		  
+//        // spreadsheet object
+//        XSSFSheet spreadsheet
+//            = workbook1.createSheet(" User Data ");
 	
-		String excelFilePath = "C:\\Users\\cbnits\\Downloads\\users_2022-02-17_16_22_48.xlsx";
+		String excelFilePath = "C:\\Users\\cbnits\\Downloads\\users_2022-02-20_19_16_20.xlsx";
         
         try {
             FileInputStream inputStream = new FileInputStream(new File(excelFilePath));
             Workbook workbook = WorkbookFactory.create(inputStream);
  
-            Sheet sheet = workbook.getSheetAt(0);
+            Sheet sheet = workbook.getSheetAt(0); 
+//        	 XSSFWorkbook workbook = new XSSFWorkbook();
+//        	  
+//             // spreadsheet object
+//             XSSFSheet sheet
+//                 = workbook.createSheet(" User Data ");
+//             Row row = sheet.createRow(0);
+//             
+//             CellStyle style = workbook.createCellStyle();
+//             XSSFFont font = workbook.createFont();
+//             font.setBold(true);
+//             font.setFontHeight(16);
+//             style.setFont(font);
+//              
+//             serv.createCell(row, 0, "id", style);      
+//             serv.createCell(row, 1, "first_name", style);       
+//             serv.createCell(row, 2, "last_name", style);    
+//             serv.createCell(row, 3, "region", style);
+//             serv.createCell(row, 4, "active_directory", style);
+//             serv.createCell(row, 5, "email_id", style);
+//             serv.createCell(row, 6, "authorisation_role", style);
+//             serv.createCell(row, 7, "sales_organisation", style);
+//             serv.createCell(row, 8, "password", style);
+//             serv.createCell(row, 9, "salt_pass", style);
+//              
+         
            
     		String salesorg=String.valueOf(data.getSales_org());
 
     		String pass = data.getPassword();
     		String hash_pass=serv.getMd5(pass);
-    		
-//    		String l = "update users SET sales_organisation = sales_organisation.id from sales_organisation WHERE sales_organisation.country = users.region";
-//			jdbcTemplate.update(l);
-			
-//			String r = (String)(jdbcTemplate.queryForObject("select id from sales_organisation where country = 'AUS'   ",String.class));
+    		byte[] salt=serv.getNextSalt();
+    		String s = String.valueOf(salt);
+    		int role = data.getAuthorisation_role();
+    	
     		     
     				UUID uuid = UUID.randomUUID();
     		    	int rowCount = sheet.getLastRowNum()+1;
-    		 
+//    		    	 XSSFWorkbook workbook;
     		        CellStyle style = workbook.createCellStyle();
     		        XSSFFont font = (XSSFFont) workbook.createFont();
     		        font.setFontHeight(14);
     		        style.setFont(font);
     		                 
     		       
-    		            Row row = sheet.createRow(rowCount);
+    		            Row row1 = sheet.createRow(rowCount);
     		            int columnCount = 0;
     		             
-    		            serv.createCell(row, columnCount++,String.valueOf(uuid), style);
-    		            serv.createCell(row, columnCount++, data.getFirst_name(), style);
-    		            serv.createCell(row, columnCount++, data.getLast_name(), style);
-    		            serv.createCell(row, columnCount++, data.getRegion(), style);
-    		            serv.createCell(row, columnCount++, data.getActive_directory(), style);
-    		            serv.createCell(row, columnCount++, data.getEmail_id(), style);
-    		            serv.createCell(row, columnCount++, data.getAuthorisation_role(), style);
-    		            serv.createCell(row, columnCount++,salesorg, style);
-    		            serv.createCell(row, columnCount++, hash_pass, style);
-    		             
+    		        
+    		            
+    		            serv.createCell(row1, columnCount++,(String.valueOf(uuid)), style);
+    		            serv.createCell(row1, columnCount++, data.getFirst_name(), style);
+    		            serv.createCell(row1, columnCount++, data.getLast_name(), style);
+    		            serv.createCell(row1, columnCount++, data.getRegion(), style);
+    		            serv.createCell(row1, columnCount++, data.getActive_directory(), style);
+    		            serv.createCell(row1, columnCount++, data.getEmail_id(), style);
+    		            serv.createCell(row1, columnCount++, String.valueOf(role), style);
+    		            serv.createCell(row1, columnCount++,salesorg, style);
+    		            serv.createCell(row1, columnCount++, hash_pass, style);
+    		            serv.createCell(row1, columnCount++, s, style);
     		        
     		   
-    		inputStream.close();
+//    		inputStream.close();
  
-            FileOutputStream outputStream = new FileOutputStream("C:\\Users\\cbnits\\Downloads\\users_2022-02-17_16_22_48.xlsx");
+            FileOutputStream outputStream = new FileOutputStream("C:\\Users\\cbnits\\Downloads\\users_2022-02-20_19_16_20.xlsx");
             workbook.write(outputStream);
             workbook.close();
             outputStream.close();
-         }
+            
 	
+	}
         catch (IOException | EncryptedDocumentException ex) {
             ex.printStackTrace();
         }
-    }		     
+    }
+	
+	 @Autowired
+	 UserRepository repository;
+	 
+	 @Autowired
+	 ExcelHelper excelhelper;
+	 
+//	List<UserRepo>
+	  @PostMapping("/upload")
+	  public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+		  
+		  	    String message = "";
+	    if (excelhelper.hasExcelFormat(file)) {
+	      try {
+	        serv.save(file);
+	        message = "Uploaded the file successfully: " + file.getOriginalFilename();
+	        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+	      } catch (Exception e) {
+	        message = "Could not upload the file: " + file.getOriginalFilename() + "!";
+	        System.out.println(e);
+	        return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+	      }
+	    }
+	    message = "Please upload an excel file!";
+	    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
+		  
+	  }
+}
+		  
+		  
+		  
+		  
+		  
+		  
+		  
+//		  List<UserRepo> students = new ArrayList<>();
+//	        XSSFWorkbook workbook = new XSSFWorkbook(files.getInputStream());
+//	        // Read student data form excel file sheet1.
+//	        XSSFSheet worksheet = workbook.getSheetAt(0);
+//	        for (int index = 0; index < worksheet.getPhysicalNumberOfRows(); index++) {
+//	            if (index > 0) {
+//	                XSSFRow row = worksheet.getRow(index);
+//	                UserRepo student = new UserRepo();
+//	                student.id = UUID.fromString(getCellValue(row, 0));
+//	                student.first_name = getCellValue(row, 1);
+//	                student.last_name = getCellValue(row, 2);
+//	                student.region = getCellValue(row, 3);
+//	                student.active_directory = getCellValue(row, 4);
+//	                student.email_id = getCellValue(row, 5);
+//	                student.authorisation_role = convertStringToInt(getCellValue(row, 6));
+//	                student.sales_org = UUID.fromString(getCellValue(row, 7));
+//	                student.password = getCellValue(row, 8);
+//	                students.add(student);
+//	            }
+//	        }
+//	        // Save to db.
+//	        List<Users> entities = new ArrayList<>();
+//	        if (students.size() > 0) {
+//	            students.forEach(x->{
+//	                Users entity = new Users();
+//	                entity.id = x.id;
+//	                entity.first_name = x.first_name;
+//	                entity.last_name = x.last_name;
+//	                entity.region = x.region;
+//	                entity.active_directory = x.active_directory;
+//	                entity.email_id = x.email_id;
+//	                entity.authorisation_role = x.authorisation_role;
+//	                entity.sales_org = x.sales_org;
+//	                entity.password = x.password;
+//	                entities.add(entity);
+//	            });
+//	            repository.saveAll(entities);
+//	        }
+//	        return students;
+//	    }
+//	    private int convertStringToInt(String str) {
+//	        int result = 0;
+//	        if (str == null || str.isEmpty() || str.trim().isEmpty()) {
+//	            return result;
+//	        }
+//	        result = Integer.parseInt(str);
+//	        return result;
+//	    }
+//	    private String getCellValue(Row row, int cellNo) {
+//	        DataFormatter formatter = new DataFormatter();
+//	        Cell cell = row.getCell(cellNo);
+//	        return formatter.formatCellValue(cell);
+//	    }
+		  
+		  
+		  
+		  
+		  
+		  
+		 
 	         
     		 
-}
+
 
 			
      

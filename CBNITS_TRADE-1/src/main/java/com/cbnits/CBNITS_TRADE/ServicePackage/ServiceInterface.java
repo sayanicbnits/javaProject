@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cbnits.CBNITS_TRADE.UsersPackage.Users;
 
@@ -31,6 +32,9 @@ public interface ServiceInterface {
 //	String check(String username, String password);
 	public List<Users> userList();
 	public void createCell(Row row, int columnCount, Object value, CellStyle style);
+	public void save(MultipartFile file);
+	public void insert1(UUID id, UUID sales_org, String fname, String lname, String email_id, String region,
+			String active_directory, int authrole, String pass, String s);
 	
 	
 }

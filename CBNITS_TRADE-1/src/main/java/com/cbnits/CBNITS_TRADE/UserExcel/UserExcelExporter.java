@@ -38,15 +38,16 @@ public class UserExcelExporter {
         font.setFontHeight(16);
         style.setFont(font);
          
-        createCell(row, 0, "ID", style);      
-        createCell(row, 1, "First_name", style);       
-        createCell(row, 2, "Last_name", style);    
-        createCell(row, 3, "Region", style);
-        createCell(row, 4, "Active_Directory", style);
-        createCell(row, 5, "Email_ID", style);
-        createCell(row, 6, "Authorisation_Role", style);
-        createCell(row, 7, "Sales_Organisation", style);
-        createCell(row, 8, "Password", style);
+        createCell(row, 0, "id", style);      
+        createCell(row, 1, "first_name", style);       
+        createCell(row, 2, "last_name", style);    
+        createCell(row, 3, "region", style);
+        createCell(row, 4, "active_directory", style);
+        createCell(row, 5, "email_id", style);
+        createCell(row, 6, "authorisation_role", style);
+        createCell(row, 7, "sales_organisation", style);
+        createCell(row, 8, "password", style);
+
          
     }
      
@@ -81,7 +82,7 @@ public class UserExcelExporter {
             createCell(row, columnCount++, user.getRegion(), style);
             createCell(row, columnCount++, user.getActive_directory(), style);
             createCell(row, columnCount++, user.getEmail_id(), style);
-            createCell(row, columnCount++, user.getAuthorisation_role(), style);
+            createCell(row, columnCount++, String.valueOf(user.getAuthorisation_role()), style);
             createCell(row, columnCount++,String.valueOf(user.getSales_org()), style);
             createCell(row, columnCount++, user.getPassword(), style);
              

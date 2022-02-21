@@ -9,22 +9,26 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Email;
-//import org.hibernate.validator.constraints.NotBlank;
-import javax.validation.constraints.NotBlank;
+import javax.transaction.Transactional;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.Range;
 
 
+
+
 @Entity
-@Table(name="users" ,
-uniqueConstraints=
-@UniqueConstraint(columnNames={"region", "active_directory"})
-)
+@Table(name="users" )
+//uniqueConstraints=
+//@UniqueConstraint(columnNames={"region", "active_directory"})
+//)
+//@Transactional
 public class Users {
+	
+	@Type(type="org.hibernate.type.PostgresUUIDType")
 	@Id
 	@GeneratedValue(generator="UUID")
 	@Column(name="id")
@@ -72,6 +76,16 @@ public class Users {
 	@Column(name="password")
 	private String password;
 	
+	
+	public String salt;
+	public String getSalt() {
+		return salt;
+	}
+
+	public void setSalt(String salt) {
+		this.salt = salt;
+	}
+
 	public String getPassword() {
 		return password;
 	}
